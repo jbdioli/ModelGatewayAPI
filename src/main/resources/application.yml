@@ -1,0 +1,52 @@
+server:
+    port: 9190
+    ssl:
+        enabled: true
+        client-auth: need
+        key-store-password: Tba,77to
+        key-store: file:c:\tmp\ssl\ssltest.p12
+        key-store-type: PKCS12
+#        trust-store: file:c:\tmp\ssl\ssltest.p12
+#        trust-store-password: Tba,77to
+#        trust-store-type: PKCS12
+#        key-alias: ssltest
+
+eureka:
+    instance:
+        non-secure-port-enabled: false
+        secure-port-enabled: true
+    client:
+        service-url:
+            defaultZone: https://localhost:9290/discoveryservice/eureka
+        register-with-eureka: true
+
+spring:
+    cloud:
+        gateway:
+            httpclient:
+                ssl:
+                    use-insecure-trust-manager: true
+                    handshake-timeout: 10000
+                    close-notify-flush-timeout: 3000
+                    close-notify-read-timeout: 0
+
+            globalcors:
+                cors-configurations:
+                    '[/**]':
+                        allowedOrigins: "*"
+                        allowedMethods: "*"
+                        allowedHeaders:
+                            - Authorization
+                add-to-simple-url-handler-mapping: true
+            routes:
+                - id: user
+                  uri: https://localhost:9090
+                  predicates:
+                    - Path=/**
+                    - Method=GET
+                  filters:
+                    - RemoveRequestHeader=Cookie
+
+
+
+
